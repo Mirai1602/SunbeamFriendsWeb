@@ -99,7 +99,7 @@
             margin-top: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
-        
+
         .post-header {
             display: flex;
             align-items: center;
@@ -151,11 +151,11 @@
             gap: 5px;
             transition: transform 0.2s ease;
         }
-        
+
         .like-btn:hover {
             transform: scale(1.1);
         }
-        
+
         .loading-text {
             text-align: center;
             color: #5ca7c9;
@@ -189,11 +189,11 @@
         import { auth, db } from '../static/js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { getPosts } from '../static/js/posts.js';
+        import { getPosts, updatePost } from '../static/js/posts.js';
 
         const openBtn = document.getElementById('openDialogBtn');
         const postsList = document.getElementById('postsList');
-        
+
         let currentUserData = null;
         let currentUserId = null;
 
@@ -208,7 +208,7 @@
                         currentUserData = userDoc.data();
                         const username = currentUserData.username || "Usuario";
                         const initials = username.substring(0, 2).toUpperCase();
-                        
+
                         document.getElementById('btnUsername').textContent = username;
                         document.getElementById('btnInitials').textContent = initials;
                     }
@@ -231,7 +231,7 @@
             try {
                 const posts = await getPosts();
                 postsList.innerHTML = ''; // Limpiar mensaje de carga
-                
+
                 if (posts.length === 0) {
                     postsList.innerHTML = '<div class="loading-text" style="color: #666;">No hay posts aún. ¡Sé el primero en publicar!</div>';
                     return;
@@ -240,14 +240,14 @@
                 posts.forEach(post => {
                     const postEl = document.createElement('div');
                     postEl.className = 'post-card';
-                    
+
                     const username = post.authorUsername || "Anónimo";
                     const initials = username.substring(0, 2).toUpperCase();
-                    
+
                     let dateStr = "Hace un momento";
                     if (post.createdAt) {
                         const date = post.createdAt.toDate();
-                        dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     }
 
                     postEl.innerHTML = `
@@ -260,9 +260,31 @@
                         </div>
                         <div class="post-content">${post.content}</div>
                         <div class="post-footer">
-                            <button class="like-btn">❤️ ${post.likeCount || 0}</button>
+                            <button class="like-btn"> 🩷 <span class="like-count">${post.likeCount || 0}</span></button>
                         </div>
                     `;
+                    
+                    const likeBtn = postEl.querySelector('.like-btn');
+                    const likeCountSpan = postEl.querySelector('.like-count');
+                    
+                    likeBtn.addEventListener('click', async () => {
+                        try {
+                            // Increment local count optimistically
+                            const newLikeCount = (post.likeCount || 0) + 1;
+                            likeCountSpan.textContent = newLikeCount;
+                            post.likeCount = newLikeCount;
+                            
+                            // Update in database
+                            await updatePost(post.id, { likeCount: newLikeCount });
+                        } catch (error) {
+                            console.error("Error al dar like:", error);
+                            // Revert on error
+                            const revertedCount = newLikeCount - 1;
+                            likeCountSpan.textContent = revertedCount;
+                            post.likeCount = revertedCount;
+                        }
+                    });
+
                     postsList.appendChild(postEl);
                 });
             } catch (error) {

@@ -58,19 +58,21 @@ export const getPosts = async () => {
     }
 };
 
-//  * @param {string} postId 
-//  * @param {Object} updatedData  
-//  */
-// export const updatePost = async (postId, updatedData) => {
-//     try {
-//         const postRef = doc(db, 'posts', postId);
-//         await updateDoc(postRef, updatedData);
-//         console.log("Post updated successfully!");
-//     } catch (error) {
-//         console.error("Error updating post: ", error);
-//         throw error;
-//     }
-// };
+/**
+ * Update a post
+ * @param {string} postId 
+ * @param {Object} updatedData  
+ */
+export const updatePost = async (postId, updatedData) => {
+    try {
+        const postRef = doc(db, 'posts', postId);
+        await updateDoc(postRef, updatedData);
+        console.log("Post updated successfully!");
+    } catch (error) {
+        console.error("Error updating post: ", error);
+        throw error;
+    }
+};
 
 /**
  * Delete a post
