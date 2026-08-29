@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro Sunbeam Friends</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Registro Dolphin Friends</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
     <style>
         * {
             margin: 0;
@@ -42,12 +43,12 @@
             letter-spacing: 1px;
             text-transform: uppercase;
         }
-    
+
         .logo-placeholder {
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background:#A2DBE2;
+            background: #A2DBE2;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -98,7 +99,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.08);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.08);
         }
 
         .resources img {
@@ -123,7 +124,7 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             font-size: 16px;
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.08);
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.08);
         }
 
         .register-form-area {
@@ -193,8 +194,17 @@
         .submit-btn:hover {
             transform: translateY(-1px);
         }
+
+        .error-msg {
+            color: #ff6b81; /* Pink tone */
+            font-size: 0.85rem;
+            margin-top: -4px;
+            display: none;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar" aria-label="Barra de navegación principal">
         <div class="logo-container">
@@ -212,27 +222,31 @@
             </div>
 
             <div class="register-form-area">
-                <form class="register-form">
+                <form class="register-form" id="registerForm">
                     <h2>Crear cuenta Dolphin!</h2>
 
                     <div class="field-group">
-                        <label for="username">Username</label>
+                        <label for="username">Nombre de usuario</label>
                         <input id="username" type="text" placeholder="AnneLi">
+                        <span class="error-msg" id="usernameError">Este campo es obligatorio.</span>
                     </div>
 
                     <div class="field-group">
                         <label for="nombre">Nombre</label>
                         <input id="nombre" type="text" placeholder="Ana García">
+                        <span class="error-msg" id="nombreError">Este campo es obligatorio.</span>
                     </div>
 
                     <div class="field-group">
-                        <label for="gmail">Gmail</label>
+                        <label for="gmail">Correo</label>
                         <input id="gmail" type="email" placeholder="tu.email@example.com">
+                        <span class="error-msg" id="gmailError">Este campo es obligatorio.</span>
                     </div>
 
                     <div class="field-group">
                         <label for="password">Contraseña</label>
                         <input id="password" type="password" placeholder="Contraseña">
+                        <span class="error-msg" id="passwordError">La contraseña debe tener al menos 6 caracteres</span>
                     </div>
 
                     <button type="submit" class="submit-btn">Registrarme</button>
@@ -240,5 +254,72 @@
             </div>
         </div>
     </section>
+
+    <script type="module">
+        import { signUp } from '../static/js/auth.js';
+
+        const registerForm = document.getElementById('registerForm');
+        
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const name = document.getElementById('nombre').value.trim();
+            const email = document.getElementById('gmail').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Reset all error messages
+            document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+
+            let hasError = false;
+
+            if (!username) {
+                document.getElementById('usernameError').style.display = 'block';
+                hasError = true;
+            }
+            if (!name) {
+                document.getElementById('nombreError').style.display = 'block';
+                hasError = true;
+            }
+            if (!email) {
+                document.getElementById('gmailError').style.display = 'block';
+                hasError = true;
+            }
+            if (!password) {
+                const pErr = document.getElementById('passwordError');
+                pErr.textContent = "Este campo es obligatorio.";
+                pErr.style.display = 'block';
+                hasError = true;
+            } else if (password.length < 6) {
+                const pErr = document.getElementById('passwordError');
+                pErr.textContent = "La contraseña debe tener al menos 6 caracteres";
+                pErr.style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) return;
+            
+            const submitBtn = registerForm.querySelector('.submit-btn');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Registrando...';
+            submitBtn.disabled = true;
+
+            try {
+                await signUp(email, password, username, name);
+                alert("¡Cuenta creada exitosamente!");
+                
+                // Redirigir al usuario (puedes cambiar esto a '/login' u otra ruta)
+                window.location.href = "/"; 
+            } catch (error) {
+                console.error("Error al registrar:", error);
+                alert("Hubo un error en el registro: " + error.message);
+                
+                // Restaurar botón en caso de error
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
 </body>
+
 </html>
