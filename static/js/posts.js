@@ -8,7 +8,10 @@ import {
     getDocs,
     query,
     orderBy,
-    serverTimestamp
+    serverTimestamp,
+    arrayUnion,
+    arrayRemove,
+    increment
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 // Collection reference
@@ -29,6 +32,7 @@ export const addPost = async (authorId, authorUsername, content = "") => {
             authorUsername,
             content,
             likeCount: 0,
+            likedBy: [],
             createdAt: serverTimestamp()
         });
         console.log("Post added with ID: ", docRef.id);
@@ -75,16 +79,27 @@ export const updatePost = async (postId, updatedData) => {
 };
 
 /**
- * Delete a post
+ * Toggle like for a post
  * @param {string} postId
+ * @param {string} userId
+ * @param {boolean} isLiking
  */
-// export const deletePost = async (postId) => {
-//     try {
-//         const postRef = doc(db, 'posts', postId);
-//         await deleteDoc(postRef);
-//         console.log("Post deleted successfully!");
-//     } catch (error) {
-//         console.error("Error deleting post: ", error);
-//         throw error;
-//     }
-// };
+export const toggleLike = async (postId, userId, isLiking) => {
+    try {
+        const postRef = doc(db, 'posts', postId);
+        if (isLiking) {
+            await updateDoc(postRef, {
+                likedBy: arrayUnion(userId),
+                likeCount: increment(1)
+            });
+        } else {
+            await updateDoc(postRef, {
+                likedBy: arrayRemove(userId),
+                likeCount: increment(-1)
+            });
+        }
+    } catch (error) {
+        console.error("Error toggling like: ", error);
+        throw error;
+    }
+};

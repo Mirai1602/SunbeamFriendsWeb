@@ -190,11 +190,11 @@
         import { auth, db } from '../static/js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { getPosts, updatePost } from '../static/js/posts.js';
+        import { getPosts, toggleLike } from '../static/js/posts.js';
 
         const openBtn = document.getElementById('openDialogBtn');
         const postsList = document.getElementById('postsList');
-
+        
         let currentUserData = null;
         let currentUserId = null;
 
@@ -209,13 +209,16 @@
                         currentUserData = userDoc.data();
                         const username = currentUserData.username || "Usuario";
                         const initials = username.substring(0, 2).toUpperCase();
-
+                        
                         document.getElementById('btnUsername').textContent = username;
                         document.getElementById('btnInitials').textContent = initials;
                     }
                 } catch (error) {
                     console.error("Error al obtener datos del usuario:", error);
                 }
+                
+                // Cargar posts DESPUÉS de tener el ID del usuario
+                loadPosts();
             } else {
                 // Redirigir al login si no está autenticado
                 window.location.href = '/templates/login.html';
@@ -251,6 +254,9 @@
                         dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     }
 
+                    const hasLiked = currentUserId && post.likedBy && post.likedBy.includes(currentUserId);
+                    const initialHeartClass = hasLiked ? "fas" : "far";
+
                     postEl.innerHTML = `
                         <div class="post-header">
                             <div class="user-initials">${initials}</div>
@@ -261,7 +267,7 @@
                         </div>
                         <div class="post-content">${post.content}</div>
                         <div class="post-footer">
-                            <button class="like-btn"><i class="far fa-heart like-icon"></i> <span class="like-count">${post.likeCount || 0}</span></button>
+                            <button class="like-btn"><i class="${initialHeartClass} fa-heart like-icon"></i> <span class="like-count">${post.likeCount || 0}</span></button>
                         </div>
                     `;
                     
@@ -270,11 +276,14 @@
                     const likeIcon = postEl.querySelector('.like-icon');
                     
                     likeBtn.addEventListener('click', async () => {
+                        if (!currentUserId) return;
+                        
                         try {
+                            const isLiking = likeIcon.classList.contains("far");
                             let newLikeCount = post.likeCount || 0;
                             
                             // Toggle animation classes and increment/decrement
-                            if(likeIcon.classList.contains("far")){
+                            if(isLiking){
                                 likeIcon.classList.remove("far");
                                 likeIcon.classList.add("fas");
                                 newLikeCount += 1;
@@ -288,8 +297,8 @@
                             likeCountSpan.textContent = newLikeCount;
                             post.likeCount = newLikeCount;
                             
-                            // Update in database
-                            await updatePost(post.id, { likeCount: newLikeCount });
+                            // Update in database using toggleLike
+                            await toggleLike(post.id, currentUserId, isLiking);
                         } catch (error) {
                             console.error("Error al dar like:", error);
                             alert("Hubo un error al actualizar el like.");
@@ -304,8 +313,6 @@
             }
         }
 
-        // Llamar a loadPosts al iniciar
-        loadPosts();
     </script>
 </body>
 
