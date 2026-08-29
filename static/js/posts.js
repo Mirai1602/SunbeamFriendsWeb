@@ -58,33 +58,31 @@ export const getPosts = async () => {
     }
 };
 
-/**
- * Update a post
- * @param {string} postId 
- * @param {Object} updatedData - Data to update (e.g., { content: "New text", likeCount: 5 })
- */
-export const updatePost = async (postId, updatedData) => {
-    try {
-        const postRef = doc(db, 'posts', postId);
-        await updateDoc(postRef, updatedData);
-        console.log("Post updated successfully!");
-    } catch (error) {
-        console.error("Error updating post: ", error);
-        throw error;
-    }
-};
+//  * @param {string} postId 
+//  * @param {Object} updatedData  
+//  */
+// export const updatePost = async (postId, updatedData) => {
+//     try {
+//         const postRef = doc(db, 'posts', postId);
+//         await updateDoc(postRef, updatedData);
+//         console.log("Post updated successfully!");
+//     } catch (error) {
+//         console.error("Error updating post: ", error);
+//         throw error;
+//     }
+// };
 
 /**
  * Delete a post
- * @param {string} postId 
+ * @param {string} postId
  */
-export const deletePost = async (postId) => {
-    try {
-        const postRef = doc(db, 'posts', postId);
-        await deleteDoc(postRef);
-        console.log("Post deleted successfully!");
-    } catch (error) {
-        console.error("Error deleting post: ", error);
-        throw error;
-    }
-};
+// export const deletePost = async (postId) => {
+//     try {
+//         const postRef = doc(db, 'posts', postId);
+//         await deleteDoc(postRef);
+//         console.log("Post deleted successfully!");
+//     } catch (error) {
+//         console.error("Error deleting post: ", error);
+//         throw error;
+//     }
+// };
