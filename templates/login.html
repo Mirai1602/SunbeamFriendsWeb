@@ -196,7 +196,8 @@
         }
 
         .error-msg {
-            color: #ff6b81; /* Pink tone */
+            color: #ff6b81;
+            /* Pink tone */
             font-size: 0.85rem;
             margin-top: -4px;
             display: none;
@@ -246,13 +247,13 @@
         import { login } from '../static/js/auth.js';
 
         const loginForm = document.getElementById('loginForm');
-        
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
             const email = document.getElementById('gmail').value.trim();
             const password = document.getElementById('password').value;
-            
+
             // Reset error messages
             document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
 
@@ -268,7 +269,7 @@
             }
 
             if (hasError) return;
-            
+
             const submitBtn = loginForm.querySelector('.submit-btn');
             const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Ingresando...';
@@ -282,7 +283,7 @@
             } catch (error) {
                 console.error("Login error:", error);
                 alert("Error al iniciar sesión: " + error.message);
-                
+
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
