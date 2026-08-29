@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dolphin Friends - Feed</title>
     <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -260,17 +261,30 @@
                         </div>
                         <div class="post-content">${post.content}</div>
                         <div class="post-footer">
-                            <button class="like-btn"> 🩷 <span class="like-count">${post.likeCount || 0}</span></button>
+                            <button class="like-btn"><i class="far fa-heart like-icon"></i> <span class="like-count">${post.likeCount || 0}</span></button>
                         </div>
                     `;
                     
                     const likeBtn = postEl.querySelector('.like-btn');
                     const likeCountSpan = postEl.querySelector('.like-count');
+                    const likeIcon = postEl.querySelector('.like-icon');
                     
                     likeBtn.addEventListener('click', async () => {
                         try {
-                            // Increment local count optimistically
-                            const newLikeCount = (post.likeCount || 0) + 1;
+                            let newLikeCount = post.likeCount || 0;
+                            
+                            // Toggle animation classes and increment/decrement
+                            if(likeIcon.classList.contains("far")){
+                                likeIcon.classList.remove("far");
+                                likeIcon.classList.add("fas");
+                                newLikeCount += 1;
+                            } else {
+                                likeIcon.classList.remove("fas");
+                                likeIcon.classList.add("far");
+                                newLikeCount -= 1;
+                            }
+                            
+                            // Optimistic UI update
                             likeCountSpan.textContent = newLikeCount;
                             post.likeCount = newLikeCount;
                             
@@ -278,10 +292,7 @@
                             await updatePost(post.id, { likeCount: newLikeCount });
                         } catch (error) {
                             console.error("Error al dar like:", error);
-                            // Revert on error
-                            const revertedCount = newLikeCount - 1;
-                            likeCountSpan.textContent = revertedCount;
-                            post.likeCount = revertedCount;
+                            alert("Hubo un error al actualizar el like.");
                         }
                     });
 
