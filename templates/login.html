@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Sunbeam Friends</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #A2DBE2;
+        }
+
+        .navbar {
+            width: 100%;
+            height: 90px;
+            background: #A2DBE2;
+            display: flex;
+            align-items: left;
+            justify-content: flex-start;
+            box-shadow: #A2DBE2;
+            padding-left: 20px;
+        }
+
+        .logo-container {
+            width: 220px;
+            height: 70px;
+            border-radius: 16px;
+            background: #A2DBE2;
+            border: #A2DBE2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    
+        .logo-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background:#A2DBE2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .register-section {
+            width: 100%;
+            min-height: calc(100vh - 90px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 12px;
+            background: rgba(110, 184, 208, 0.45);
+        }
+
+        .ImagenLogin {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+            display: block;
+        }
+
+        .register-card {
+            width: min(980px, 100%);
+            min-height: 560px;
+            margin: 0 12px;
+            background: rgba(235, 248, 252, 0.9);
+            border: 1px solid rgba(118, 175, 205, 0.5);
+            border-radius: 28px;
+            box-shadow: 0 16px 40px rgba(53, 112, 145, 0.18);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .register-visual {
+            flex: 1;
+            min-width: 300px;
+            background: linear-gradient(135deg, rgba(103, 175, 212, 0.7), rgba(167, 226, 237, 0.8));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+
+        .image-frame {
+            width: 100%;
+            height: 100%;
+            min-height: 440px;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 16px;
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.08);
+        }
+
+        .image-frame::before {
+            content: "Imagen";
+            position: absolute;
+            z-index: 1;
+        }
+
+        .image-frame img {
+            position: relative;
+            z-index: 2;
+        }
+
+        .register-form-area {
+            flex: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 36px;
+            background: rgba(223, 239, 245, 0.75);
+        }
+
+        .register-form {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .register-form h2 {
+            font-size: 2rem;
+            margin-bottom: 28px;
+            color: #124d68;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .field-group label {
+            font-size: 0.9rem;
+            color: #205f7a;
+            font-weight: 700;
+        }
+
+        .field-group input {
+            width: 100%;
+            height: 48px;
+            border: 1px solid rgba(77, 140, 174, 0.45);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 0 14px;
+            font-size: 1rem;
+            color: #204e68;
+            outline: none;
+        }
+
+        .field-group input:focus {
+            border-color: #69a9c4;
+            box-shadow: 0 0 0 3px rgba(105, 169, 196, 0.18);
+        }
+
+        .submit-btn {
+            margin-top: 12px;
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #E4B0C1, #F7BCD0);
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Barra de navegación principal">
+        <div class="logo-container">
+            <img src="logo2.png" alt="Logo Sunbeam Friends" class="logo-placeholder">
+            <span>Dolphin Friends!</span>
+        </div>
+    </nav>
+
+    <section class="register-section">
+        <div class="register-card">
+            <div class="register-visual">
+                <div class="image-frame">
+                    <img class="ImagenLogin" src="inicio.jpeg" alt="imagen inicio">
+                </div>
+            </div>
+
+            <div class="register-form-area">
+                <form class="register-form">
+                    <h2>Ingresa a tu cuenta Dolphin!</h2>
+
+                    <div class="field-group">
+                        <label for="username">Username</label>
+                        <input id="username" type="text" placeholder="AnneLi">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="nombre">Nombre</label>
+                        <input id="nombre" type="text" placeholder="Ana García">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="gmail">Gmail</label>
+                        <input id="gmail" type="email" placeholder="tu.email@example.com">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="password">Contraseña</label>
+                        <input id="password" type="password" placeholder="Contraseña">
+                    </div>
+
+                    <button type="submit" class="submit-btn">Registrarme</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
