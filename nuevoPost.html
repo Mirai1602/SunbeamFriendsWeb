@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dolphin Friends - Nuevo Post</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="./static/css/styles.css">
     <style>
         * {
             margin: 0;
@@ -150,7 +150,7 @@
 <body>
     <nav class="navbar" aria-label="Barra de navegación principal">
         <div class="logo-container">
-            <img src="../static/img/logo.jpeg" alt="Logo" class="logo-placeholder" style="object-fit: cover;">
+            <img src="./static/img/logo.jpeg" alt="Logo" class="logo-placeholder" style="object-fit: cover;">
             <span>Dolphin Friends!</span>
         </div>
     </nav>
@@ -171,10 +171,10 @@
     </div>
 
     <script type="module">
-        import { auth, db } from '../static/js/firebase-config.js';
+        import { auth, db } from './static/js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { addPost } from '../static/js/posts.js';
+        import { addPost } from './static/js/posts.js';
 
         const cancelBtn = document.getElementById('cancelBtn');
         const publishBtn = document.getElementById('publishBtn');
@@ -203,7 +203,7 @@
                 }
             } else {
                 // Si no hay sesión iniciada, redirigir al login
-                window.location.href = '/templates/login.html';
+                window.location.href = 'login.html';
             }
         });
 
