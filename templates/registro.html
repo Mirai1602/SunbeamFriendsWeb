@@ -353,8 +353,8 @@
                 await signUp(email, password, username, name);
                 alert("¡Cuenta creada exitosamente!");
 
-                // Redirigir al usuario
-                window.location.href = "/templates/login.html";
+                // Redirigir al usuario al feed
+                window.location.href = "base.html";
             } catch (error) {
                 console.error("Error al registrar:", error);
                 alert("Hubo un error en el registro: " + error.message);

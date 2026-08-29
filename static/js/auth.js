@@ -1,6 +1,6 @@
 // public/js/auth.js
 import { auth, db } from './firebase-config.js';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 export const signUp = async (email, password, username, name) => {
@@ -38,6 +38,16 @@ export const login = async (email, password) => {
         return user;
     } catch (error) {
         console.error("Login failed:", error);
+        throw error;
+    }
+};
+
+export const logout = async () => {
+    try {
+        await signOut(auth);
+        console.log("Logged out successfully");
+    } catch (error) {
+        console.error("Logout failed:", error);
         throw error;
     }
 };

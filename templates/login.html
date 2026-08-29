@@ -278,8 +278,9 @@
             try {
                 await login(email, password);
                 alert("¡Has iniciado sesión exitosamente!");
-                // Redirigir al usuario
-                window.location.href = "/";
+                
+                // Redirigir al usuario al feed
+                window.location.href = "base.html";
             } catch (error) {
                 console.error("Login error:", error);
                 alert("Error al iniciar sesión: " + error.message);

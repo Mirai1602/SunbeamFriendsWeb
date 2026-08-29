@@ -1,1 +1,85 @@
-<!-- main feed -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolphin Friends</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #A2DBE2; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        
+        .landing-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .big-logo {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border: 5px solid #fff;
+        }
+
+        .app-name {
+            font-size: 3.5rem;
+            color: #124d68;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.5);
+            letter-spacing: 2px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn-landing {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-landing:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-login { background: #5ca7c9; }
+        .btn-register { background: #E4B0C1; }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <img src="logo2.png" alt="Dolphin Friends Logo" class="big-logo">
+        <h1 class="app-name">Dolphin Friends!</h1>
+        <div class="btn-group">
+            <a href="login.html" class="btn-landing btn-login">Iniciar Sesión</a>
+            <a href="registro.html" class="btn-landing btn-register">Registrarme</a>
+        </div>
+    </div>
+</body>
+</html>
