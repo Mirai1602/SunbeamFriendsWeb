@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolphin Friends - Nuevo Post</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #A2DBE2;
+        }
+
+        .navbar {
+            width: 100%;
+            height: 90px;
+            background: #A2DBE2;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            width: 220px;
+            height: 70px;
+            border-radius: 16px;
+            background: #A2DBE2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .logo-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .create-post-container {
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .dialog-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .user-initials {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5ca7c9, #87d3e8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .dialog-header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dialog-username {
+            font-weight: bold;
+            color: #124d68;
+            font-size: 1.1rem;
+        }
+
+        .dialog-title {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .post-input {
+            width: 100%;
+            min-height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.1rem;
+            resize: none;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .post-input:focus {
+            outline: none;
+            border-color: #69a9c4;
+            box-shadow: 0 0 0 3px rgba(105, 169, 196, 0.18);
+        }
+
+        .dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel,
+        .btn-publish {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-cancel:hover, .btn-publish:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-cancel {
+            background: #f1f1f1;
+            color: #555;
+        }
+
+        .btn-publish {
+            background: linear-gradient(135deg, #E4B0C1, #F7BCD0);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" aria-label="Barra de navegación principal">
+        <div class="logo-container">
+            <img src="../static/img/logo.jpeg" alt="Logo" class="logo-placeholder" style="object-fit: cover;">
+            <span>Dolphin Friends!</span>
+        </div>
+    </nav>
+
+    <div class="create-post-container">
+        <div class="dialog-header">
+            <div class="user-initials" id="dialogInitials">?</div>
+            <div class="dialog-header-text">
+                <span class="dialog-username" id="dialogUsername">Cargando...</span>
+                <span class="dialog-title">Nuevo Post</span>
+            </div>
+        </div>
+        <textarea class="post-input" id="postContent" placeholder="¿Qué estás pensando?"></textarea>
+        <div class="dialog-actions">
+            <button class="btn-cancel" id="cancelBtn">Cancelar</button>
+            <button class="btn-publish" id="publishBtn">Publicar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../static/js/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { addPost } from '../static/js/posts.js';
+
+        const cancelBtn = document.getElementById('cancelBtn');
+        const publishBtn = document.getElementById('publishBtn');
+        const postContent = document.getElementById('postContent');
+        
+        let currentUserData = null;
+        let currentUserId = null;
+
+        // Escuchar el estado de autenticación
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                        
+                        const username = currentUserData.username || "Usuario";
+                        const initials = username.substring(0, 2).toUpperCase();
+                        
+                        document.getElementById('dialogUsername').textContent = username;
+                        document.getElementById('dialogInitials').textContent = initials;
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos del usuario:", error);
+                }
+            } else {
+                // Si no hay sesión iniciada, redirigir al login
+                window.location.href = '/templates/login.html';
+            }
+        });
+
+        // Cancelar y volver al feed
+        cancelBtn.addEventListener('click', () => {
+            window.location.href = '/templates/base.html';
+        });
+
+        // Publicar Post
+        publishBtn.addEventListener('click', async () => {
+            const content = postContent.value.trim();
+            if (!content) {
+                alert("El post no puede estar vacío.");
+                return;
+            }
+
+            if (!currentUserData || !currentUserId) {
+                alert("Debes iniciar sesión para publicar.");
+                return;
+            }
+
+            publishBtn.textContent = 'Publicando...';
+            publishBtn.disabled = true;
+
+            try {
+                await addPost(
+                    currentUserId, 
+                    currentUserData.username, 
+                    content
+                );
+                
+                alert("¡Post publicado exitosamente!");
+                window.location.href = '/templates/base.html';
+                
+            } catch (error) {
+                alert("Hubo un error al publicar.");
+                console.error(error);
+                publishBtn.textContent = 'Publicar';
+                publishBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

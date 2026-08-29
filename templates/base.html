@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dolphin Friends - Feed</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #A2DBE2;
+        }
+
+        .navbar {
+            width: 100%;
+            height: 90px;
+            background: #A2DBE2;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            width: 220px;
+            height: 70px;
+            border-radius: 16px;
+            background: #A2DBE2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .logo-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .feed-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .btn-add-post {
+            width: 100%;
+            padding: 15px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #205f7a;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-add-post:hover {
+            transform: translateY(-2px);
+        }
+
+        .user-initials {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5ca7c9, #87d3e8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Post Styles */
+        .post-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .post-header-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .post-username {
+            font-weight: bold;
+            color: #124d68;
+            font-size: 1.1rem;
+        }
+
+        .post-date {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .post-content {
+            color: #444;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+        }
+
+        .post-footer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            color: #ff6b81;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: transform 0.2s ease;
+        }
+        
+        .like-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .loading-text {
+            text-align: center;
+            color: #5ca7c9;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" aria-label="Barra de navegación principal">
+        <div class="logo-container">
+            <img src="../static/img/logo.jpeg" alt="Logo" class="logo-placeholder" style="object-fit: cover;">
+            <span>Dolphin Friends!</span>
+        </div>
+    </nav>
+
+    <div class="feed-container">
+        <!-- Button to trigger new post page -->
+        <button class="btn-add-post" id="openDialogBtn">
+            <div class="user-initials" id="btnInitials">?</div>
+            ¿Qué estás pensando, <span id="btnUsername">...</span>?
+        </button>
+
+        <div id="postsList">
+            <div class="loading-text">Cargando posts...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../static/js/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+        import { getPosts } from '../static/js/posts.js';
+
+        const openBtn = document.getElementById('openDialogBtn');
+        const postsList = document.getElementById('postsList');
+        
+        let currentUserData = null;
+        let currentUserId = null;
+
+        // Escuchar el estado de autenticación
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserId = user.uid;
+                try {
+                    // Obtener los datos del usuario de Firestore
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        currentUserData = userDoc.data();
+                        const username = currentUserData.username || "Usuario";
+                        const initials = username.substring(0, 2).toUpperCase();
+                        
+                        document.getElementById('btnUsername').textContent = username;
+                        document.getElementById('btnInitials').textContent = initials;
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos del usuario:", error);
+                }
+            } else {
+                // Redirigir al login si no está autenticado
+                window.location.href = '/templates/login.html';
+            }
+        });
+
+        // Navegar a la página de nuevo post
+        openBtn.addEventListener('click', () => {
+            window.location.href = '/templates/nuevoPost.html';
+        });
+
+        // Cargar posts
+        async function loadPosts() {
+            try {
+                const posts = await getPosts();
+                postsList.innerHTML = ''; // Limpiar mensaje de carga
+                
+                if (posts.length === 0) {
+                    postsList.innerHTML = '<div class="loading-text" style="color: #666;">No hay posts aún. ¡Sé el primero en publicar!</div>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    const postEl = document.createElement('div');
+                    postEl.className = 'post-card';
+                    
+                    const username = post.authorUsername || "Anónimo";
+                    const initials = username.substring(0, 2).toUpperCase();
+                    
+                    let dateStr = "Hace un momento";
+                    if (post.createdAt) {
+                        const date = post.createdAt.toDate();
+                        dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    }
+
+                    postEl.innerHTML = `
+                        <div class="post-header">
+                            <div class="user-initials">${initials}</div>
+                            <div class="post-header-text">
+                                <span class="post-username">${username}</span>
+                                <span class="post-date">${dateStr}</span>
+                            </div>
+                        </div>
+                        <div class="post-content">${post.content}</div>
+                        <div class="post-footer">
+                            <button class="like-btn">❤️ ${post.likeCount || 0}</button>
+                        </div>
+                    `;
+                    postsList.appendChild(postEl);
+                });
+            } catch (error) {
+                console.error("Error al cargar posts:", error);
+                postsList.innerHTML = '<div class="loading-text" style="color: #ff6b81;">Error al cargar los posts.</div>';
+            }
+        }
+
+        // Llamar a loadPosts al iniciar
+        loadPosts();
+    </script>
+</body>
+
+</html>

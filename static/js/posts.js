@@ -1,14 +1,14 @@
 import { db } from './firebase-config.js';
-import { 
-    collection, 
-    addDoc, 
-    doc, 
-    updateDoc, 
-    deleteDoc, 
-    getDocs, 
-    query, 
-    orderBy, 
-    serverTimestamp 
+import {
+    collection,
+    addDoc,
+    doc,
+    updateDoc,
+    deleteDoc,
+    getDocs,
+    query,
+    orderBy,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 // Collection reference
@@ -19,16 +19,15 @@ const postsCollection = collection(db, 'posts');
  * @param {string} authorId 
  * @param {string} authorUsername 
  * @param {string} content 
- * @param {string} imageUrl 
+
  * @returns {Promise<string>} The new post's document ID
  */
-export const addPost = async (authorId, authorUsername, content, imageUrl = "") => {
+export const addPost = async (authorId, authorUsername, content = "") => {
     try {
         const docRef = await addDoc(postsCollection, {
             authorId,
             authorUsername,
             content,
-            imageUrl,
             likeCount: 0,
             createdAt: serverTimestamp()
         });
