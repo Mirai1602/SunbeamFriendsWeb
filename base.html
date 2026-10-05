@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dolphin Friends - Feed</title>
-    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="./static/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -211,11 +211,11 @@
     </div>
 
     <script type="module">
-        import { auth, db } from '../static/js/firebase-config.js';
+        import { auth, db } from './static/js/firebase-config.js';
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
         import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-        import { getPosts, toggleLike } from '../static/js/posts.js';
-        import { logout } from '../static/js/auth.js';
+        import { getPosts, toggleLike } from './static/js/posts.js';
+        import { logout } from './static/js/auth.js';
 
         const openBtn = document.getElementById('openDialogBtn');
         const postsList = document.getElementById('postsList');
@@ -246,13 +246,13 @@
                 loadPosts();
             } else {
                 // Redirigir al login si no está autenticado
-                window.location.href = '/templates/login.html';
+                window.location.href = 'login.html';
             }
         });
 
         // Navegar a la página de nuevo post
         openBtn.addEventListener('click', () => {
-            window.location.href = '/templates/nuevoPost.html';
+            window.location.href = 'nuevoPost.html';
         });
 
         // Logout
